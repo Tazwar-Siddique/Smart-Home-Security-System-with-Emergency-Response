@@ -1,0 +1,54 @@
+// Code your testbench here
+// or browse Examples
+module alarm_tb;
+    reg clk, reset, activate, unauthorized_entry;
+    wire alarm_output, call_output;
+
+    // Clock generation
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+
+    // Instantiate the DUT
+    Home_security_system uut (
+        .clk(clk),
+        .reset(reset),
+        .activate(activate),
+        .unauthorized_entry(unauthorized_entry),
+        .alarm_output(alarm_output),
+        .call_output(call_output)
+    );
+
+    // Testbench stimulus
+    initial begin
+        reset = 1;
+        activate = 0;;
+        unauthorized_entry = 0;
+
+        // Apply reset
+        #10 reset = 0;
+
+        // Test case 1: Activate, Deactivate, and Trigger Alarm
+        #20 activate = 1;
+        #30 activate = 0;
+      	#20 activate = 1;
+        #20 unauthorized_entry = 1;
+        #10 activate = 0;
+        	unauthorized_entry = 0;
+      	#20 activate = 1;
+        #20 unauthorized_entry = 1;
+		#40 activate = 0;
+      		unauthorized_entry = 0;
+
+        // End simulation
+        #100 $finish;
+    end
+
+    // Dump waves
+    initial begin
+        $dumpfile("dump.vcd");
+        $dumpvars(1);
+    end
+
+endmodule
